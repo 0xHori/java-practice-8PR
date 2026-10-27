@@ -1,0 +1,56 @@
+digraph G {
+    graph [rankdir=TB, bgcolor="white", pad=0.2, nodesep=0.25, ranksep=0.35];
+    node [shape=box, style="rounded,filled", fontname="Times New Roman", fontsize=11,
+          color="#2F5597", fillcolor="#EAF2F8", margin="0.12,0.08"];
+    edge [fontname="Times New Roman", fontsize=9, color="#555555"];
+
+    start [label="Начало", shape=oval, fillcolor="#E2F0D9", color="#548235"];
+    end   [label="Завершение", shape=oval, fillcolor="#FCE4D6", color="#C65911"];
+
+    n0 [label="App.main(args)\nвзять args или DEFAULT_COMMANDS\nTRIP_ID / EMPLOYEE / START / END",
+        shape=parallelogram, fillcolor="#E4DFEC", color="#7030A0"];
+
+    n1 [label="BusinessTripService.create(TRIP_ID, EMPLOYEE, START, END)\nstatus = DRAFT"];
+
+    n2 [label="Получить команду\nsubmit / approve / cancel / complete / reject:reason",
+        shape=parallelogram, fillcolor="#E4DFEC", color="#7030A0"];
+
+    n3 [label="requireStatus(expected, action):\nтекущий status совместим с операцией"];
+
+    d1 [label="Переход допустим?", shape=diamond, fillcolor="#FFF2CC", color="#BF9000"];
+    err1 [label="IllegalStateException\nобъект не изменён",
+          fillcolor="#F4CCCC", color="#C00000"];
+
+    n4 [label="Проверить данные операции:\nreject(reason >= 20), complete(today > end)"];
+
+    d2 [label="Данные корректны?", shape=diamond, fillcolor="#FFF2CC", color="#BF9000"];
+    err2 [label="IllegalArgumentException\nобъект не изменён",
+          fillcolor="#F4CCCC", color="#C00000"];
+
+    n5 [label="Изменить статус заявки\nstatus = <новый>"];
+
+    d3 [label="Есть ещё команды?", shape=diamond, fillcolor="#FFF2CC", color="#BF9000"];
+
+    out [label="App: вывести\nтекущий статус\nи сообщения об ошибках"];
+
+    start -> n0;
+    n0 -> n1;
+    n1 -> n2;
+    n2 -> n3;
+    n3 -> d1;
+
+    d1 -> n4   [label="да"];
+    d1 -> err1 [label="нет"];
+    err1 -> out;
+
+    n4 -> d2;
+    d2 -> n5   [label="да"];
+    d2 -> err2 [label="нет"];
+    err2 -> out;
+
+    n5 -> d3;
+    d3 -> n2  [label="да"];
+    d3 -> out [label="нет"];
+
+    out -> end;
+}

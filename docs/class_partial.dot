@@ -1,0 +1,36 @@
+digraph C {
+    graph [rankdir=TB, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.5];
+    node [shape=record, style="filled", fontname="Times New Roman", fontsize=10,
+          color="#2F5597", fillcolor="#F7FBFF"];
+    edge [fontname="Times New Roman", fontsize=9, color="#555555"];
+
+    ts [label="{TripStatus|«enumeration»\l|DRAFT\lSUBMITTED\lAPPROVED\lREJECTED\lCANCELLED\lCOMPLETED\l}"];
+
+    emp [label="{Employee|«record»\l|+ id : String\l+ fullName : String\l|+ Employee(id, fullName)\l}"];
+
+    t [label="{BusinessTrip|+ static MIN_REJECTION_REASON_LENGTH : int = 20\l- id : String\l- employee : Employee\l- start : LocalDate\l- end : LocalDate\l- status : TripStatus\l- rejectionReason : String\l|+ BusinessTrip(id, employee, start, end)\l+ submit() : void\l+ approve() : void\l+ reject(reason : String) : void\l+ cancel() : void\l+ complete(today : LocalDate) : void\l- requireStatus(expected : TripStatus, action : String) : void\l+ getId() : String\l+ getEmployee() : Employee\l+ getStart() : LocalDate\l+ getEnd() : LocalDate\l+ getStatus() : TripStatus\l+ getRejectionReason() : String\l}"];
+
+    sv [label="{BusinessTripService|- trips : List\<BusinessTrip\>\l|+ create(id : String, employee : Employee, start : LocalDate, end : LocalDate) : BusinessTrip\l+ findByStatus(status : TripStatus) : List\<BusinessTrip\>\l+ getAll() : List\<BusinessTrip\>\l}"];
+
+    app [label="{App|- static TRIP_ID : String\l- static EMPLOYEE : Employee\l- static START : LocalDate\l- static END : LocalDate\l- static TODAY_AFTER : LocalDate\l- static REJECTION_REASON : String\l- static DEFAULT_COMMANDS : String[]\l|+ static main(args : String[]) : void\l- static applyCommand(trip : BusinessTrip, cmd : String) : void\l}",
+         fillcolor="#E7F5E7", color="#2E7D32"];
+
+    sc [label="{SelfCheck||+ static main(args : String[]) : void\l}",
+        fillcolor="#F4F4F4", color="#888888"];
+
+    t -> ts  [label="status", style=dashed, arrowhead=open];
+    t -> emp [label="1", arrowtail=odiamond, dir=both];
+
+    sv -> t  [label="creates", style=dashed, arrowhead=open];
+    sv -> ts [label="uses",    style=dashed, arrowhead=open];
+
+    app -> sv [label="uses",     style=dashed, arrowhead=open];
+    app -> t  [label="uses",     style=dashed, arrowhead=open];
+    app -> ts [label="uses",     style=dashed, arrowhead=open];
+    app -> emp [label="EMPLOYEE", style=dashed, arrowhead=open];
+
+    sc -> t  [label="uses", style=dashed, arrowhead=open];
+    sc -> sv [label="uses", style=dashed, arrowhead=open];
+    sc -> ts [label="uses", style=dashed, arrowhead=open];
+    sc -> emp [label="uses", style=dashed, arrowhead=open];
+}
